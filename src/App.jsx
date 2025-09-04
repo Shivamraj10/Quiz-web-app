@@ -45,6 +45,17 @@ function App() {
     }
   };
 
+  const nextQuestion = () => {
+    setSelectedAnswer('');
+    setCorrectAnswer('');
+    setButtonDisabled(false);
+    const wrongBtn = document.querySelector('button.bg-danger');
+    wrongBtn?.classList.remove('bg-danger');
+    const rightBtn = document.querySelector('button.bg-success');
+    rightBtn?.classList.remove('bg-success');
+    setQuestionIndex(questionIndex + 1);
+  };
+
   return (
     <>
       <StartQuiz startQuiz={startQuiz} showStart={showStart} />
@@ -57,6 +68,7 @@ function App() {
         selectedAnswer={selectedAnswer}
         questionIndex={questionIndex}
         buttonDisabled={buttonDisabled}
+        nextQuestion={nextQuestion}
       />
     </>
   );

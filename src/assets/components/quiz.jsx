@@ -8,6 +8,7 @@ const Quiz = (props) => {
     selectedAnswer,
     questionIndex,
     buttonDisabled,
+    nextQuestion,
   } = props;
 
   return (
@@ -45,7 +46,10 @@ const Quiz = (props) => {
                   </button>
                 ))}
               </div>
-              <button className="btn py-2 w-100 mt-3 bg-primary text-light fw-bold">
+              <button
+                className="btn py-2 w-100 mt-3 bg-primary text-light fw-bold"
+                onClick={nextQuestion}
+              >
                 Next Question
               </button>
             </div>
