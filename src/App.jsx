@@ -1,115 +1,112 @@
-import { useEffect, useState } from 'react';
-import StartQuiz from './assets/components/start';
-import QuizPage from './assets/components/quiz';
-import Result from './assets/components/result';
+import { useEffect, useState } from "react";
+import StartQuiz from "./assets/components/StartQuiz";
+import QuizPage from "./assets/components/QuizPage";
+import Result from "./assets/components/Result";
 
 function App() {
   const [quiz, setQuiz] = useState([]);
-  const [question, setQuestion] = useState({});
   const [questionIndex, setQuestionIndex] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState('');
-  const [correctAnswer, setCorrectAnswer] = useState('');
-  const [buttonDisabled, setButtonDisabled] = useState(false);
+  const [answers, setAnswers] = useState([]); // track user answers
   const [mark, setMark] = useState(0);
 
   const [showStart, setShowStart] = useState(true);
   const [showQuiz, setShowQuiz] = useState(false);
   const [showResult, setShowResult] = useState(false);
 
+  // Fetch quiz questions
   useEffect(() => {
-    fetch('/quiz.json')
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('network error');
-        }
-        return response.json();
-      })
+    fetch("/quiz.json")
+      .then((res) => res.json())
       .then((data) => setQuiz(data))
-      .catch((error) => console.log(error.message));
+      .catch((err) => console.error(err));
   }, []);
-
-  useEffect(() => {
-    if (quiz.length > questionIndex) {
-      setQuestion(quiz[questionIndex]);
-    }
-  }, [quiz, questionIndex]);
 
   const startQuiz = () => {
     setShowStart(false);
     setShowQuiz(true);
   };
 
-  const checkAnswer = (event, selected) => {
-    if (!selectedAnswer) {
-      setCorrectAnswer(question.answer);
-      setSelectedAnswer(selected);
-      setButtonDisabled(true);
-    }
+  const checkAnswer = (selected) => {
+    const currentQ = quiz[questionIndex];
+    const isCorrect = selected === currentQ.answer;
 
-    if (selected === question.answer) {
-      event.target.classList.add('bg-success');
-      setMark(mark + 5);
-    } else {
-      event.target.classList.add('bg-danger');
+    // prevent duplicate answers (if going back/forward)
+    const existing = answers.find((a) => a.index === questionIndex);
+    if (existing) return;
+
+    setAnswers((prev) => [
+      ...prev,
+      {
+        index: questionIndex,
+        question: currentQ.question,
+        selected,
+        correct: currentQ.answer,
+        isCorrect,
+      },
+    ]);
+
+    if (isCorrect) {
+      setMark((prev) => prev + 1);
     }
   };
 
   const nextQuestion = () => {
-    setSelectedAnswer('');
-    setCorrectAnswer('');
-    setButtonDisabled(false);
+    if (questionIndex < quiz.length - 1) {
+      setQuestionIndex((prev) => prev + 1);
+    }
+  };
 
-    const wrongBtn = document.querySelector('button.bg-danger');
-    wrongBtn?.classList.remove('bg-danger');
+  const prevQuestion = () => {
+    if (questionIndex > 0) {
+      setQuestionIndex((prev) => prev - 1);
+    }
+  };
 
-    const correctBtn = document.querySelector('button.bg-success');
-    correctBtn?.classList.remove('bg-success');
-
-    setQuestionIndex(questionIndex + 1);
+  const skipQuestion = () => {
+    if (questionIndex < quiz.length - 1) {
+      setQuestionIndex((prev) => prev + 1);
+    } else {
+      showingResult();
+    }
   };
 
   const showingResult = () => {
     setShowResult(true);
     setShowQuiz(false);
-    setShowStart(false);
   };
 
   const startOver = () => {
-    setShowStart(false);
+    setShowStart(true);
+    setShowQuiz(false);
     setShowResult(false);
-    setShowQuiz(true);
-    setButtonDisabled(false);
-    setCorrectAnswer('');
-    setSelectedAnswer('');
     setQuestionIndex(0);
+    setAnswers([]);
     setMark(0);
-
-    const wrongBtn = document.querySelector('button.bg-danger');
-    wrongBtn?.classList.remove('bg-danger');
-
-    const correctBtn = document.querySelector('button.bg-success');
-    correctBtn?.classList.remove('bg-success');
   };
 
   return (
     <>
       <StartQuiz startQuiz={startQuiz} showStart={showStart} />
+
       <QuizPage
         quiz={quiz}
         showQuiz={showQuiz}
-        question={question}
+        question={quiz[questionIndex]}
         questionIndex={questionIndex}
+        totalQuestions={quiz.length}
         checkAnswer={checkAnswer}
-        buttonDisabled={buttonDisabled}
-        correctAnswer={correctAnswer}
         nextQuestion={nextQuestion}
-        selectedAnswer={selectedAnswer}
+        prevQuestion={prevQuestion}
+        skipQuestion={skipQuestion}
+        answers={answers}
         showingResult={showingResult}
       />
+
       <Result
         showResult={showResult}
         quiz={quiz}
         mark={mark}
+        answers={answers}
         startOver={startOver}
       />
     </>
