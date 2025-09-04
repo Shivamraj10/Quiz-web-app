@@ -1,6 +1,5 @@
 const Result = (props) => {
   const { showResult, quiz, mark, startOver } = props;
-
   return (
     <section
       className="bg-dark text-white"

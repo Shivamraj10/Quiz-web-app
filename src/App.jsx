@@ -1,15 +1,14 @@
 import { useEffect, useState } from 'react';
 import StartQuiz from './assets/components/start';
-import './assets/css/app.css';
-import Quiz from './assets/components/quiz';
+import QuizPage from './assets/components/quiz';
 import Result from './assets/components/result';
 
 function App() {
   const [quiz, setQuiz] = useState([]);
   const [question, setQuestion] = useState({});
   const [questionIndex, setQuestionIndex] = useState(0);
-  const [correctAnswer, setCorrectAnswer] = useState('');
   const [selectedAnswer, setSelectedAnswer] = useState('');
+  const [correctAnswer, setCorrectAnswer] = useState('');
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [mark, setMark] = useState(0);
 
@@ -18,9 +17,15 @@ function App() {
   const [showResult, setShowResult] = useState(false);
 
   useEffect(() => {
-    fetch('/public/quiz.json')
-      .then((response) => response.json())
-      .then((data) => setQuiz(data));
+    fetch('/quiz.json')
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('network error');
+        }
+        return response.json();
+      })
+      .then((data) => setQuiz(data))
+      .catch((error) => console.log(error.message));
   }, []);
 
   useEffect(() => {
@@ -53,17 +58,20 @@ function App() {
     setSelectedAnswer('');
     setCorrectAnswer('');
     setButtonDisabled(false);
+
     const wrongBtn = document.querySelector('button.bg-danger');
     wrongBtn?.classList.remove('bg-danger');
-    const rightBtn = document.querySelector('button.bg-success');
-    rightBtn?.classList.remove('bg-success');
+
+    const correctBtn = document.querySelector('button.bg-success');
+    correctBtn?.classList.remove('bg-success');
+
     setQuestionIndex(questionIndex + 1);
   };
 
   const showingResult = () => {
     setShowResult(true);
-    setShowStart(false);
     setShowQuiz(false);
+    setShowStart(false);
   };
 
   const startOver = () => {
@@ -75,25 +83,27 @@ function App() {
     setSelectedAnswer('');
     setQuestionIndex(0);
     setMark(0);
+
     const wrongBtn = document.querySelector('button.bg-danger');
     wrongBtn?.classList.remove('bg-danger');
-    const rightBtn = document.querySelector('button.bg-success');
-    rightBtn?.classList.remove('bg-success');
+
+    const correctBtn = document.querySelector('button.bg-success');
+    correctBtn?.classList.remove('bg-success');
   };
 
   return (
     <>
       <StartQuiz startQuiz={startQuiz} showStart={showStart} />
-      <Quiz
+      <QuizPage
         quiz={quiz}
         showQuiz={showQuiz}
         question={question}
-        checkAnswer={checkAnswer}
-        correctAnswer={correctAnswer}
-        selectedAnswer={selectedAnswer}
         questionIndex={questionIndex}
+        checkAnswer={checkAnswer}
         buttonDisabled={buttonDisabled}
+        correctAnswer={correctAnswer}
         nextQuestion={nextQuestion}
+        selectedAnswer={selectedAnswer}
         showingResult={showingResult}
       />
       <Result

@@ -1,15 +1,15 @@
-const Quiz = (props) => {
+const QuizPage = (props) => {
   const {
     quiz,
-    showQuiz,
     question,
-    checkAnswer,
-    correctAnswer,
-    selectedAnswer,
     questionIndex,
+    checkAnswer,
     buttonDisabled,
+    correctAnswer,
     nextQuestion,
+    selectedAnswer,
     showingResult,
+    showQuiz,
   } = props;
 
   return (
@@ -73,4 +73,4 @@ const Quiz = (props) => {
   );
 };
 
-export default Quiz;
+export default QuizPage;
