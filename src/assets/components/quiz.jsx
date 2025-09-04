@@ -9,6 +9,7 @@ const Quiz = (props) => {
     questionIndex,
     buttonDisabled,
     nextQuestion,
+    showingResult,
   } = props;
 
   return (
@@ -46,12 +47,24 @@ const Quiz = (props) => {
                   </button>
                 ))}
               </div>
-              <button
-                className="btn py-2 w-100 mt-3 bg-primary text-light fw-bold"
-                onClick={nextQuestion}
-              >
-                Next Question
-              </button>
+
+              {questionIndex + 1 !== quiz.length ? (
+                <button
+                  className="btn py-2 w-100 mt-3 bg-primary text-light fw-bold"
+                  onClick={nextQuestion}
+                  disabled={!selectedAnswer}
+                >
+                  Next Question
+                </button>
+              ) : (
+                <button
+                  className="btn py-2 w-100 mt-3 bg-primary text-light fw-bold"
+                  onClick={showingResult}
+                  disabled={!selectedAnswer}
+                >
+                  Show Result
+                </button>
+              )}
             </div>
           </div>
         </div>
