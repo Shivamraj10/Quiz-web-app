@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import StartQuiz from './assets/components/start';
 import './assets/css/app.css';
+import Quiz from './assets/components/quiz';
 
 function App() {
   const [showStart, setShowStart] = useState(true);
@@ -14,6 +15,7 @@ function App() {
   return (
     <>
       <StartQuiz startQuiz={startQuiz} showStart={showStart} />
+      <Quiz />
     </>
   );
 }
