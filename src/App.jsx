@@ -3,6 +3,7 @@ import StartQuiz from "./assets/components/StartQuiz";
 import QuizPage from "./assets/components/QuizPage";
 import Result from "./assets/components/Result";
 
+
 function App() {
   const [quiz, setQuiz] = useState([]);
   const [questionIndex, setQuestionIndex] = useState(0);
