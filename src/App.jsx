@@ -7,8 +7,10 @@ function App() {
   const [quiz, setQuiz] = useState([]);
   const [question, setQuestion] = useState({});
   const [questionIndex, setQuestionIndex] = useState(0);
+  const [correctAnswer, setCorrectAnswer] = useState('');
+  const [selectedAnswer, setSelectedAnswer] = useState('');
+  const [buttonDisabled, setButtonDisabled] = useState(false);
 
-  // handle the quiz page
   const [showStart, setShowStart] = useState(true);
   const [showQuiz, setShowQuiz] = useState(false);
 
@@ -29,10 +31,33 @@ function App() {
     setShowQuiz(true);
   };
 
+  const checkAnswer = (event, selected) => {
+    if (!selectedAnswer) {
+      setCorrectAnswer(question.answer);
+      setSelectedAnswer(selected);
+      setButtonDisabled(true);
+    }
+
+    if (selected === question.answer) {
+      event.target.classList.add('bg-success');
+    } else {
+      event.target.classList.add('bg-danger');
+    }
+  };
+
   return (
     <>
       <StartQuiz startQuiz={startQuiz} showStart={showStart} />
-      <Quiz quiz={quiz} showQuiz={showQuiz} question={question} />
+      <Quiz
+        quiz={quiz}
+        showQuiz={showQuiz}
+        question={question}
+        checkAnswer={checkAnswer}
+        correctAnswer={correctAnswer}
+        selectedAnswer={selectedAnswer}
+        questionIndex={questionIndex}
+        buttonDisabled={buttonDisabled}
+      />
     </>
   );
 }

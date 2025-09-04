@@ -1,5 +1,15 @@
 const Quiz = (props) => {
-  const { quiz, showQuiz, question } = props;
+  const {
+    quiz,
+    showQuiz,
+    question,
+    checkAnswer,
+    correctAnswer,
+    selectedAnswer,
+    questionIndex,
+    buttonDisabled,
+  } = props;
+
   return (
     <section
       className="bg-dark text-white"
@@ -25,14 +35,19 @@ const Quiz = (props) => {
                 {question?.options?.map((item, index) => (
                   <button
                     key={index}
-                    className={`option w-100 text-start btn text-white py-2 px-3 mt-3 rounded btn-dark`}
+                    className={`option w-100 text-start btn text-white py-2 px-3 mt-3 rounded btn-dark ${
+                      correctAnswer === item && 'bg-success'
+                    }`}
+                    onClick={(event) => checkAnswer(event, item)}
+                    disabled={buttonDisabled}
                   >
                     {item}
                   </button>
                 ))}
               </div>
-
-              {/* some element */}
+              <button className="btn py-2 w-100 mt-3 bg-primary text-light fw-bold">
+                Next Question
+              </button>
             </div>
           </div>
         </div>
